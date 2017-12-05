@@ -11,12 +11,20 @@ import UIKit
 class MasterViewController: UITableViewController {
 
     var detailViewController: DetailViewController? = nil
-    var objects = [Any]()
+    var objects = [NewsItem]()
 
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        
+//        for _ in 0 ..< 6 {
+//            objects.insert(NSDate(), at: 0)
+//            let indexPath = IndexPath(row: 0, section: 0)
+//            tableView.insertRows(at: [indexPath], with: .automatic)
+//        }
+
+        self.navigationController?.isNavigationBarHidden = true
+        
         navigationItem.leftBarButtonItem = editButtonItem
 
         let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(insertNewObject(_:)))
@@ -24,8 +32,29 @@ class MasterViewController: UITableViewController {
         if let split = splitViewController {
             let controllers = split.viewControllers
             detailViewController = (controllers[controllers.count-1] as! UINavigationController).topViewController as? DetailViewController
+
         }
+        
+        let newsItem1 = NewsItem(category: "World", headline: "Climate change protests, divestments meet fossil fuels realities", categoryColour: UIColor.red)
+        let newsItem2 = NewsItem(category: "Europe", headline: "Scotland's 'Yes' leader says independence vote is 'once in a lifetime", categoryColour: UIColor.green)
+        let newsItem3 = NewsItem(category: "Middle East", headline: "Airstrikes boost Islamic State, FBI director warns more hostages possible", categoryColour: UIColor.yellow)
+        let newsItem4 = NewsItem(category: "Africa", headline: "Nigeria says 70 dead in building collapse; questions S. Africa victim claim", categoryColour: UIColor.orange)
+        let newsItem5 = NewsItem(category: "Asia Pacific", headline: "Despite UN ruling, Japan seeks backing for whale hunting", categoryColour: UIColor.purple)
+        let newsItem6 = NewsItem(category: "Americas", headline: "Officials: FBI is tracking 100 Americans who fought alongside IS in Syria", categoryColour: UIColor.blue)
+        var newsItem7 = newsItem1
+        newsItem7.headline = "South Africa in $40 billion deal for Russian nuclear reactors"
+        var newsItem8 = newsItem2
+        newsItem8.headline = "One million babies' created by EU student exchanges"
+        
+        objects.append(contentsOf: [newsItem1, newsItem2, newsItem3, newsItem4, newsItem5, newsItem6, newsItem7, newsItem8])
     }
+    
+    struct NewsItem {
+        var category : String
+        var headline : String
+        var categoryColour : UIColor
+    }
+    
 
     override func viewWillAppear(_ animated: Bool) {
         clearsSelectionOnViewWillAppear = splitViewController!.isCollapsed
@@ -39,24 +68,24 @@ class MasterViewController: UITableViewController {
 
     @objc
     func insertNewObject(_ sender: Any) {
-        objects.insert(NSDate(), at: 0)
+//        objects.insert(NSDate(), at: 0)
         let indexPath = IndexPath(row: 0, section: 0)
         tableView.insertRows(at: [indexPath], with: .automatic)
     }
 
     // MARK: - Segues
 
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "showDetail" {
-            if let indexPath = tableView.indexPathForSelectedRow {
-                let object = objects[indexPath.row] as! NSDate
-                let controller = (segue.destination as! UINavigationController).topViewController as! DetailViewController
-                controller.detailItem = object
-                controller.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
-                controller.navigationItem.leftItemsSupplementBackButton = true
-            }
-        }
-    }
+//    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+//        if segue.identifier == "showDetail" {
+//            if let indexPath = tableView.indexPathForSelectedRow {
+//                let object = objects[indexPath.row] as! NSDate
+//                let controller = (segue.destination as! UINavigationController).topViewController as! DetailViewController
+//                controller.detailItem = object
+//                controller.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
+//                controller.navigationItem.leftItemsSupplementBackButton = true
+//            }
+//        }
+//    }
 
     // MARK: - Table View
 
@@ -70,9 +99,11 @@ class MasterViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as? CustomTableViewCell
-
-        cell?.categoryLabel.text = "World"
-        cell?.headlineLabel.text = "Climate change protests, divestments meet fossil fuels realities"
+        
+        let object = objects[indexPath.row]
+        cell?.categoryLabel.text = object.category
+        cell?.categoryLabel.textColor = object.categoryColour
+        cell?.headlineLabel.text = object.headline
         
         return cell!
     }
