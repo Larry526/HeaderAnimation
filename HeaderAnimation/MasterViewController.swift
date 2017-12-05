@@ -69,11 +69,12 @@ class MasterViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as? CustomTableViewCell
 
-        let object = objects[indexPath.row] as! NSDate
-        cell.textLabel!.text = object.description
-        return cell
+        cell?.categoryLabel.text = "World"
+        cell?.headlineLabel.text = "Climate change protests, divestments meet fossil fuels realities"
+        
+        return cell!
     }
 
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
