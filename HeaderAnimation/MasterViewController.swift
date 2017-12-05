@@ -9,15 +9,39 @@
 import UIKit
 
 class MasterViewController: UITableViewController {
-
-    var detailViewController: DetailViewController? = nil
+    
     var objects = [NewsItem]()
-
-
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // MARK: - UI Stuff
+        
+        let topView = UIView()
+        topView.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: (view.frame.height/7 * 3))
+        topView.backgroundColor = UIColor.black
+        tableView.tableHeaderView = topView;
+        
+        let imageView = UIImageView(image: (UIImage (named: "header")))
+        topView.addSubview(imageView)
+        imageView.frame = topView.frame
+        imageView.contentMode = .scaleAspectFill
+        
+        let date = Date()
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMMM dd"
+        let result = formatter.string(from: date)
+        
+        let dateLabel = UILabel()
+        dateLabel.frame = CGRect(x: 5, y: 5, width: topView.frame.width/2, height: topView.frame.height/4)
+        topView.addSubview(dateLabel)
+        dateLabel.text = result
+        dateLabel.textColor = .white
+        
         self.navigationController?.isNavigationBarHidden = true
+        
+        // MARK: - Initialze newsItems
         
         let newsItem1 = NewsItem(category: "World", headline: "Climate change protests, divestments meet fossil fuels realities", categoryColour: UIColor.red)
         let newsItem2 = NewsItem(category: "Europe", headline: "Scotland's 'Yes' leader says independence vote is 'once in a lifetime", categoryColour: UIColor.green)
@@ -38,18 +62,18 @@ class MasterViewController: UITableViewController {
         var headline : String
         var categoryColour : UIColor
     }
-
-
+    
+    
     // MARK: - Table View
-
+    
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
-
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return objects.count
     }
-
+    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as? CustomTableViewCell
         
@@ -60,21 +84,7 @@ class MasterViewController: UITableViewController {
         
         return cell!
     }
-
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
-    }
-
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            objects.remove(at: indexPath.row)
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view.
-        }
-    }
-
-
+    
+    
 }
 
