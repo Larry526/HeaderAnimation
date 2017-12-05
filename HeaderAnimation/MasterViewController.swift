@@ -11,22 +11,34 @@ import UIKit
 class MasterViewController: UITableViewController {
     
     var objects = [NewsItem]()
-    
+    var headerView : UIView!
+    var kTableHeaderHeight : CGFloat = 0.0
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         // MARK: - UI Stuff
+        kTableHeaderHeight = view.frame.height/7 * 3
         
-        let topView = UIView()
-        topView.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: (view.frame.height/7 * 3))
-        topView.backgroundColor = UIColor.black
-        tableView.tableHeaderView = topView;
+        headerView = UIView()
+        headerView.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: kTableHeaderHeight)
+        headerView.backgroundColor = .black
+//        headerView.translatesAutoresizingMaskIntoConstraints = false
+//        tableView.tableHeaderView = headerView
+        tableView.addSubview(headerView)
         
         let imageView = UIImageView(image: (UIImage (named: "header")))
-        topView.addSubview(imageView)
-        imageView.frame = topView.frame
+        headerView.addSubview(imageView)
+        imageView.frame = headerView.frame
+        imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFill
+        
+        
+        let imageViewVerticalConstraints = NSLayoutConstraint.constraints(withVisualFormat: "V:|[imageView]|", options: [], metrics: nil, views: ["imageView": imageView])
+        headerView.addConstraints(imageViewVerticalConstraints)
+        let imageViewHorizontalConstraints = NSLayoutConstraint.constraints(withVisualFormat: "|[imageView]|", options: [], metrics: nil, views: ["imageView": imageView])
+        headerView.addConstraints(imageViewHorizontalConstraints)
+        
         
         let date = Date()
         let formatter = DateFormatter()
@@ -34,12 +46,16 @@ class MasterViewController: UITableViewController {
         let result = formatter.string(from: date)
         
         let dateLabel = UILabel()
-        dateLabel.frame = CGRect(x: 5, y: 5, width: topView.frame.width/2, height: topView.frame.height/4)
-        topView.addSubview(dateLabel)
+        dateLabel.frame = CGRect(x: 10, y: 0, width: view.frame.width/2, height: view.frame.height/4)
+        imageView.addSubview(dateLabel)
         dateLabel.text = result
         dateLabel.textColor = .white
         
         self.navigationController?.isNavigationBarHidden = true
+        
+        tableView.contentInset = UIEdgeInsets(top: kTableHeaderHeight, left: 0, bottom: 0, right: 0)
+        tableView.contentOffset = CGPoint(x: 0, y: -kTableHeaderHeight)
+        updateHeaderView()
         
         // MARK: - Initialze newsItems
         
@@ -55,6 +71,20 @@ class MasterViewController: UITableViewController {
         newsItem8.headline = "One million babies' created by EU student exchanges"
         objects.append(contentsOf: [newsItem1, newsItem2, newsItem3, newsItem4, newsItem5, newsItem6, newsItem7, newsItem8])
         
+        
+    }
+    
+    func updateHeaderView () {
+        var headerRect = CGRect(x: 0, y: -kTableHeaderHeight, width: tableView.bounds.width, height: kTableHeaderHeight)
+        if tableView.contentOffset.y < -kTableHeaderHeight {
+            headerRect.origin.y = tableView.contentOffset.y
+            headerRect.size.height = -tableView.contentOffset.y
+        }
+        headerView.frame = headerRect
+    }
+    
+    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        updateHeaderView()
     }
     
     struct NewsItem {
